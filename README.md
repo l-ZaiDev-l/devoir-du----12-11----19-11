@@ -2,7 +2,7 @@
 
 Ce projet est une application **Angular** de type **market en ligne**, permettant d’afficher des produits, d’appliquer des filtres, et de proposer une expérience utilisateur moderne et performante.
 
-Le projet est développé dans le cadre d’un devoir académique et respecte les bonnes pratiques Angular (architecture, CI, performance).
+Le projet est développé dans le cadre d’un **devoir académique** et respecte les **bonnes pratiques Angular** (architecture, CI, performance).
 
 ---
 
@@ -11,7 +11,8 @@ Le projet est développé dans le cadre d’un devoir académique et respecte le
 - **Angular** (framework front-end)
 - **TypeScript**
 - **RxJS**
-- **HTML / CSS / Tailwind (si utilisé)**
+- **HTML / CSS**
+- **Tailwind CSS** (si utilisé)
 - **Node.js / npm**
 - **Docker**
 - **GitHub Actions (CI/CD)**
@@ -33,11 +34,11 @@ Le projet est développé dans le cadre d’un devoir académique et respecte le
 ## 🧠 Bonnes pratiques Angular
 
 - Composants modulaires
-- Services pour la logique métier
-- Reactive Forms
-- Observables (`RxJS`)
+- Services dédiés à la logique métier
+- Utilisation des **Observables (RxJS)**
 - `debounceTime`, `switchMap` pour la performance
-- Séparation claire entre UI et logique
+- Séparation claire entre UI et logique applicative
+- Architecture maintenable et scalable
 
 ---
 
