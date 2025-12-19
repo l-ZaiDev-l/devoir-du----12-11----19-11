@@ -1,0 +1,116 @@
+<app-page-wrapper>
+  <!-- Title -->
+  <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Products</h1>
+
+<!-- Filters Card -->
+<div class="bg-gray-50 rounded-3xl shadow-lg border border-gray-200 p-8 space-y-8">
+
+  <!-- Card Header -->
+  <div class="flex items-center justify-between border-b border-gray-200 pb-4">
+    <h2 class="text-2xl font-bold text-gray-900">Filtrer les produits</h2>
+    <button
+      (click)="resetFilters()"
+      class="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:bg-red-700 transition-colors"
+    >
+      Reset
+    </button>
+  </div>
+
+  <!-- Filters Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+    <!-- Sort by -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col space-y-3">
+      <label class="text-gray-700 font-medium">Sort by</label>
+      <select
+        [(ngModel)]="ordering"
+        (change)="onFiltersChanged()"
+        class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+      >
+        <option value="-created_at">Newest</option>
+        <option value="created_at">Oldest</option>
+        <option value="-price">Price High → Low</option>
+        <option value="price">Price Low → High</option>
+        <option value="-avg">Rating High → Low</option>
+        <option value="avg">Rating Low → High</option>
+
+      </select>
+    </div>
+
+    <!-- Minimum Rating -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col space-y-3">
+      <label class="text-gray-700 font-medium">Minimum rating</label>
+      <div class="flex items-center space-x-2">
+        <ng-container *ngFor="let star of [1,2,3,4,5]">
+          <button
+            type="button"
+            (click)="minRating = star; onFiltersChanged()"
+            class="text-gray-300 hover:text-yellow-400 transition-colors text-xl"
+            [ngClass]="{ 'text-yellow-400': star <= (minRating || 0) }"
+          >
+            <mat-icon>star</mat-icon>
+          </button>
+        </ng-container>
+        <span *ngIf="minRating" class="text-gray-600 font-medium">({{ minRating }})</span>
+      </div>
+    </div>
+
+    <!-- Page Size -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col space-y-3">
+      <label class="text-gray-700 font-medium">Products per page</label>
+      <select
+        [(ngModel)]="pageSize"
+        (change)="onFiltersChanged()"
+        class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+      >
+        <option value="5">5 produits</option>
+        <option value="10">10 produits</option>
+        <option value="20">20 produits</option>
+      </select>
+    </div>
+
+  </div>
+</div>
+
+
+  <!-- Loading -->
+  <div *ngIf="loading$ | async" class="flex justify-center py-12">
+    <mat-progress-spinner mode="indeterminate" diameter="60"></mat-progress-spinner>
+  </div>
+
+  <!-- Product list -->
+  <app-products-list
+    [products]="(list$ | async) || []"
+    [loading]="(loading$ | async) ?? false"
+  ></app-products-list>
+
+  <!-- Pagination -->
+  <div *ngIf="totalPages > 1" class="flex justify-center items-center gap-4 mt-8">
+    <button
+      mat-mini-fab
+      color="primary"
+      (click)="prevPage()"
+      [disabled]="page === 1"
+      class="hover:scale-105 transition-transform"
+    >
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <span class="font-medium text-gray-700 text-lg"> Page {{ page }} / {{ totalPages }} </span>
+
+    <button
+      mat-mini-fab
+      color="primary"
+      (click)="nextPage()"
+      [disabled]="page === totalPages"
+      class="hover:scale-105 transition-transform"
+    >
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+  <!-- Count -->
+  <div *ngIf="count$ | async as count" class="text-gray-500 text-center text-sm mt-2">
+    Total products: {{ count }}
+  </div>
+</app-page-wrapper>

@@ -1,0 +1,108 @@
+<app-page-wrapper class="bg-gray-50 p-6">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+    <h1 class="text-4xl font-extrabold text-gray-900 mb-4 sm:mb-0">Tableau de Bord Admin</h1>
+    <p class="text-gray-600">Bienvenue sur votre espace de gestion. 📊</p>
+  </div>
+
+  <!-- Error -->
+  <ng-container *ngIf="error$ | async as error">
+    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded mb-6 shadow">
+      {{ error }}
+    </div>
+  </ng-container>
+
+  <!-- Loading -->
+  <ng-container *ngIf="loading$ | async">
+    <div class="flex justify-center my-10">
+      <mat-progress-spinner mode="indeterminate" diameter="60"></mat-progress-spinner>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="stats$ | async as stats">
+
+    <!-- Top Cards with Icons -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+      <mat-card class="p-6 rounded-xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1 flex items-center gap-4 bg-blue-50">
+        <mat-icon class="text-blue-600 text-4xl">group</mat-icon>
+        <div>
+          <h3 class="text-gray-700 font-medium mb-1">Utilisateurs</h3>
+          <p class="text-3xl font-bold text-gray-900">{{ stats.totalUsers }}</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="p-6 rounded-xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1 flex items-center gap-4 bg-green-50">
+        <mat-icon class="text-green-600 text-4xl">shopping_cart</mat-icon>
+        <div>
+          <h3 class="text-gray-700 font-medium mb-1">Commandes</h3>
+          <p class="text-3xl font-bold text-gray-900">{{ stats.totalOrders }}</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="p-6 rounded-xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1 flex items-center gap-4 bg-yellow-50">
+        <mat-icon class="text-yellow-600 text-4xl">euro_symbol</mat-icon>
+        <div>
+          <h3 class="text-gray-700 font-medium mb-1">Chiffre d'affaires</h3>
+          <p class="text-3xl font-bold text-gray-900">{{ stats.totalRevenue | number }} €</p>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Recent Orders (moved on top for priority) -->
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold mb-4 text-gray-900">Commandes Récentes</h2>
+      <mat-card class="rounded-xl shadow overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">ID</th>
+              <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Utilisateur</th>
+              <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Total</th>
+              <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Date</th>
+              <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Statut</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let o of stats.recentOrders" class="hover:bg-gray-50 transition">
+              <td class="px-6 py-4 text-gray-800 font-medium">{{ o.id }}</td>
+              <td class="px-6 py-4 text-gray-800">{{ o.user }}</td>
+              <td class="px-6 py-4 text-gray-800">{{ o.total | number }} €</td>
+              <td class="px-6 py-4 text-gray-800">{{ o.createdAt | date:'short' }}</td>
+              <td class="px-6 py-4">
+                <span
+                  class="px-2 py-1 rounded-full text-sm font-semibold"
+                  [ngClass]="{
+                    'bg-green-100 text-green-700': o.status === 'Delivered',
+                    'bg-yellow-100 text-yellow-700': o.status === 'Pending',
+                    'bg-red-100 text-red-700': o.status === 'Cancelled'
+                  }"
+                >
+                  {{ o.status }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </mat-card>
+    </section>
+
+    <!-- Top Products -->
+    <section>
+      <h2 class="text-2xl font-bold mb-4 text-gray-900">Top Produits</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <mat-card *ngFor="let p of stats.topProducts" class="p-5 rounded-xl shadow hover:shadow-lg transition transform hover:scale-[1.03] flex flex-col justify-between bg-gradient-to-br from-blue-50 to-white">
+          <div>
+            <p class="text-gray-900 font-semibold mb-2">{{ p.name }}</p>
+            <div class="flex justify-between text-gray-600 text-sm">
+              <span>Vendus: <strong>{{ p.sold }}</strong></span>
+              <span>Revenus: <strong>{{ p.revenue | number }} €</strong></span>
+            </div>
+          </div>
+          <mat-icon class="text-gray-300 text-6xl self-end mt-3">star</mat-icon>
+        </mat-card>
+      </div>
+    </section>
+    
+  </ng-container>
+</app-page-wrapper>

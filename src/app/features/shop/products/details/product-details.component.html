@@ -1,0 +1,121 @@
+<app-page-wrapper>
+  <section class="mx-auto max-w-6xl px-6 py-16 space-y-24">
+
+    <ng-container *ngIf="product$ | async as product; else loading">
+
+      <!-- =============================== -->
+      <!-- HERO IMAGE PRODUIT AVEC OVERLAY -->
+      <!-- =============================== -->
+      <div class="relative rounded-3xl overflow-hidden shadow-xl">
+        <img
+          [src]="product.image_url"
+          alt="{{ product.name }}"
+          class="w-full h-[450px] object-cover transition-transform duration-500 hover:scale-105"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6">
+          <h1 class="text-4xl font-extrabold text-white">{{ product.name }}</h1>
+          <p class="text-xl font-bold text-white mt-2">${{ product.price.toFixed(2) }}</p>
+          <p [ngClass]="stockClass(product.stock)" class="text-sm font-semibold text-white mt-1">
+            Stock: {{ product.stock }}
+          </p>
+        </div>
+      </div>
+
+      <!-- =============================== -->
+      <!-- DETAILS & ACTIONS -->
+      <!-- =============================== -->
+      <div class="grid md:grid-cols-2 gap-12 items-start bg-white p-8 rounded-2xl shadow-lg">
+        <div class="space-y-6">
+
+          <div class="flex items-center gap-4">
+            <span class="text-yellow-400 text-lg font-semibold">★ {{ avgRating$ | async }}</span>
+            <span class="text-gray-500">({{ reviewsLength }} avis)</span>
+          </div>
+
+          <p class="text-gray-700 leading-relaxed">
+            Cette chaussure est conçue pour offrir confort et style. Idéale pour un usage quotidien et pour les longues promenades.
+          </p>
+
+          <div class="flex flex-wrap gap-4 items-center mt-4">
+            <input
+              type="number"
+              [(ngModel)]="quantity"
+              min="1"
+              [max]="product.stock"
+              class="w-24 rounded-lg border border-gray-300 px-3 py-2 text-center focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+            <button
+              mat-flat-button
+              color="primary"
+              class="bg-blue-600 hover:bg-blue-700 text-white rounded-2xl px-8 py-2 font-semibold shadow-md transition-transform hover:scale-105"
+              (click)="addToCart(product)"
+              [disabled]="product.stock === 0"
+            >
+              Add to cart
+            </button>
+          </div>
+
+          <p class="text-sm text-gray-400">Ajouté le: {{ product.created_at | date: 'medium' }}</p>
+        </div>
+      </div>
+
+      <!-- =============================== -->
+      <!-- SECTION AVIS CLIENTS EN CARDS -->
+      <!-- =============================== -->
+      <div class="space-y-8">
+        <h2 class="text-3xl font-bold text-gray-900 border-b pb-2">Avis Clients</h2>
+
+        <div *ngFor="let review of reviews$ | async; trackBy: trackById" class="flex flex-col md:flex-row bg-white rounded-2xl shadow-lg border border-gray-200 p-6 gap-6">
+          <div class="flex-shrink-0">
+            <div class="w-14 h-14 bg-gray-200 rounded-full flex items-center justify-center font-bold text-gray-700">
+              {{ review.user }}
+            </div>
+          </div>
+          <div>
+            <p class="font-semibold text-gray-800">User {{ review.user }}</p>
+            <p class="text-gray-600 mt-1">{{ review.comment }}</p>
+            <p class="text-sm text-gray-400 mt-1">Rating: {{ review.value }} | {{ review.createdAt | date: 'short' }}</p>
+          </div>
+        </div>
+
+        <!-- FORMULAIRE D’AVIS -->
+        <div class="bg-gray-50 rounded-2xl border border-gray-200 shadow-lg p-8">
+          <h3 class="text-lg font-semibold mb-4">Laisser un avis</h3>
+          <div class="flex flex-col md:flex-row gap-4 items-start">
+            <input
+              type="number"
+              min="1"
+              max="5"
+              [(ngModel)]="newRating"
+              name="newRating"
+              placeholder="Note (1-5)"
+              class="border rounded-lg px-3 py-2 w-24 focus:ring-2 focus:ring-green-500 focus:outline-none"
+            />
+            <input
+              type="text"
+              [(ngModel)]="newComment"
+              name="newComment"
+              placeholder="Your comment"
+              class="border rounded-lg px-3 py-2 flex-1 focus:ring-2 focus:ring-green-500 focus:outline-none"
+            />
+            <button
+              type="button"
+              class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-2xl font-semibold shadow-md transition-transform hover:scale-105"
+              (click)="submitReview(product.id)"
+            >
+              Publish
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+
+    <ng-template #loading>
+      <div class="flex justify-center mt-20">
+        <mat-progress-spinner mode="indeterminate" diameter="60"></mat-progress-spinner>
+      </div>
+    </ng-template>
+
+  </section>
+</app-page-wrapper>

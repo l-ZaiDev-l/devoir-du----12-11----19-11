@@ -1,0 +1,86 @@
+<div class="max-w-sm mx-auto bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+
+  <!-- IMAGE + WISHLIST -->
+  <div class="relative">
+    <img
+      *ngIf="product.image_url"
+      [src]="product.image_url"
+      alt="{{ product.name }}"
+      class="w-full h-60 object-cover rounded-t-3xl transition-transform duration-500 hover:scale-105"
+    />
+    <div *ngIf="!product.image_url" class="w-full h-60 bg-gray-100 flex items-center justify-center text-gray-400 text-lg rounded-t-3xl">
+      No Image
+    </div>
+
+    <!-- CŒUR WISHLIST SVG ANIMÉ -->
+    <button (click)="toggleWishlist($event)" class="absolute top-3 right-3 w-12 h-12 flex items-center justify-center">
+      <svg 
+        [ngClass]="{
+          'fill-red-500 scale-110 animate-pulse': isInWishlist$ | async,
+          'fill-gray-400 hover:fill-red-500': !(isInWishlist$ | async)
+        }"
+        xmlns="http://www.w3.org/2000/svg" 
+        viewBox="0 0 24 24" 
+        class="w-8 h-8 transition-transform duration-300"
+      >
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 
+                 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 
+                 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 
+                 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- CONTENU -->
+  <div class="p-5 flex flex-col gap-4">
+
+    <!-- Nom Produit -->
+    <h3 class="text-lg font-bold text-gray-900 line-clamp-2 hover:text-blue-600 transition-colors cursor-pointer" (click)="goToDetail()">
+      {{ product.name }}
+    </h3>
+
+    <!-- Prix -->
+    <p class="text-xl font-semibold text-green-600">Prix: {{ product.price | currency:'EUR' }}</p>
+
+    <!-- Owner & Date -->
+    <div class="text-sm text-gray-500 space-y-1">
+      <p>Owner: {{ product.owner_id }}</p>
+      <p>Created: {{ product.created_at | date:'short' }}</p>
+    </div>
+
+    <!-- Rating -->
+    <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1">
+        <ng-container *ngFor="let star of starsArray">
+          <span class="text-yellow-400 text-lg">{{ star }}</span>
+        </ng-container>
+      </div>
+      <span class="text-gray-500 text-sm">
+        {{ avgRating !== 'N/A' ? avgRating : 'No ratings' }}
+      </span>
+    </div>
+
+    <!-- Stock Badge -->
+    <div
+      [ngClass]="{
+        'bg-red-100 text-red-700': product.stock === 0,
+        'bg-yellow-100 text-yellow-800': product.stock > 0 && product.stock <= product.lowStockThreshold,
+        'bg-green-100 text-green-700': product.stock > product.lowStockThreshold
+      }"
+      class="inline-block px-3 py-1 text-sm font-semibold rounded-full"
+    >
+      Stock: {{ product.stock }}
+    </div>
+
+    <!-- Bouton CTA -->
+    <button
+      mat-flat-button
+      color="primary"
+      class="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-2xl shadow-md transition-transform hover:scale-105"
+      (click)="goToDetail()"
+      [disabled]="product.stock === 0"
+    >
+      Voir Détails
+    </button>
+  </div>
+</div>
